@@ -4,7 +4,7 @@ import com.fuzzylite.Engine;
 import com.fuzzylite.term.*;
 import com.fuzzylite.variable.InputVariable;
 
-public class Inputs {
+public class Inputs_Ghosts {
 
 	private InputVariable distancia = new InputVariable();
 
@@ -18,7 +18,7 @@ public class Inputs {
 	private InputVariable[] inputs = {distancia, tiempo_edible, numeroPowerPills, numeroPills};
 	
 	public void init(){
-		// DISTANCIA
+		// DISTANCIA A FANTASMA MAS CERCANO
 		distancia.setEnabled(true);
 		distancia.setName("Distancia");
 		distancia.setRange(0.000, 150.000);
@@ -26,7 +26,7 @@ public class Inputs {
 		distancia.addTerm(new Trapezoid("MEDIA", 30.000, 65.000, 85.000, 120.000));
 		distancia.addTerm(new Ramp("LEJOS", 90.000, 135.000));
 
-		// TIEMPO EDIBLE
+		// TIEMPO EDIBLE DE LOS FANTASMAS
 		double tiempo = pacman.game.Constants.EDIBLE_TIME;
 		tiempo_edible.setRange(0.0, tiempo);
 		tiempo_edible.setEnabled(true);

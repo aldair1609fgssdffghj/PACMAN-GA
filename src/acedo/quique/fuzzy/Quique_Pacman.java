@@ -6,22 +6,22 @@ import pacman.controllers.Controller;
 import pacman.game.Constants.*;
 import pacman.game.Game;
 
-public class QuiqueGhosts extends Controller<EnumMap<GHOST,MOVE>>{
+public class Quique_Pacman extends Controller<EnumMap<GHOST,MOVE>>{
 
 	
 	EnumMap<GHOST, MOVE> movimientos = new EnumMap<GHOST, MOVE>(GHOST.class);
 	Engine motor= new Engine();
-	Inputs_Ghosts inputs = new Inputs_Ghosts();
-	Outputs_Ghosts outputs = new Outputs_Ghosts();
-	Reglas_Ghosts reglas = new Reglas_Ghosts();
+	Inputs_Pacman inputs = new Inputs_Pacman();
+	Outputs_Pacman outputs = new Outputs_Pacman();
+	Reglas_Pacman reglas = new Reglas_Pacman();
 
 	/**
-	 * Constructor de la clase QuiqueGhosts
+	 * Constructor de la clase Quique_Pacman
 	 * Inicaliza las variables input y output y las reglas 
 	 * y las agrega al motor
 	 */
-	public QuiqueGhosts(){
-		motor.setName("Fuzzy-Ghost");
+	public Quique_Pacman(){
+		motor.setName("Fuzzy-Pacman");
 
 		// Inicializamos los inputs
 		inputs.init();
@@ -54,9 +54,8 @@ public class QuiqueGhosts extends Controller<EnumMap<GHOST,MOVE>>{
 				double number_power_pills = juego.getActivePowerPillsIndices().length;
 				double number_pills = juego.getActivePillsIndices().length;
 
-				inputs.getDistancia().setInputValue(distance_to_pacman);
 				inputs.getTiempoEdible().setInputValue(time_edible);
-				inputs.getNumeroPowerPills().setInputValue(number_power_pills);
+				inputs.getDistanciaPowerPills().setInputValue(number_power_pills);
 				inputs.getNumeroPills().setInputValue(number_pills);
 
 				motor.process();

@@ -6,7 +6,7 @@ import com.fuzzylite.norm.t.Minimum;
 import com.fuzzylite.rule.Rule;
 import com.fuzzylite.rule.RuleBlock;
 
-public class Reglas {
+public class Reglas_Ghosts {
 	private RuleBlock mis_reglas = new RuleBlock();
 
 	private RuleBlock[] reglas = {mis_reglas}; 
