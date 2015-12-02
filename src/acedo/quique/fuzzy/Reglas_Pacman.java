@@ -1,5 +1,14 @@
 package acedo.quique.fuzzy;
 
+/**
+ * Reglas_Pacman.java
+ * @author Quique
+ * @version 1.0
+ * @date 2/12/2015
+ */
+
+
+import java.util.HashMap;
 import com.fuzzylite.Engine;
 import com.fuzzylite.norm.s.Maximum;
 import com.fuzzylite.norm.t.Minimum;
@@ -11,31 +20,52 @@ public class Reglas_Pacman {
 
 	private RuleBlock[] reglas = {mis_reglas}; 
 
-	public void init(Engine engine){
+	private HashMap<String, String[]> variables_input;
+	
+	private String[] reglas_string = new String[256];
+
+	public Reglas_Pacman(HashMap<String, String[]> variables_input){
+		this.variables_input = variables_input;
+	}//Constructor
+	
+	
+	/**
+	 * 
+	 * @param engine
+	 */
+	public void init(Engine engine, int[] genotipo){
 		mis_reglas.setEnabled(true);
 		mis_reglas.setName("");
 		mis_reglas.setConjunction(new Minimum());
 		mis_reglas.setDisjunction(new Maximum());
 		mis_reglas.setActivation(new Minimum());
-
-		mis_reglas.addRule(Rule.parse("if NumeroPowerPills is not NINGUNA  and TiempoEdible is MUCHO or TiempoEdible is MEDIO then Accion is HUIR", engine));
-		mis_reglas.addRule(Rule.parse("if NumeroPowerPills is NINGUNA and TiempoEdible is MUCHO or TiempoEdible is MEDIO  then Accion is ATACAR", engine));
-		mis_reglas.addRule(Rule.parse("if NumeroPowerPills is NINGUNA and TiempoEdible is POCO and Distancia is CERCA then Accion is ESPERAR", engine));
-		mis_reglas.addRule(Rule.parse("if NumeroPowerPills is NINGUNA and TiempoEdible is POCO and Distancia is not CERCA then Accion is ATACAR", engine));
-
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is POCO and Distancia is LEJOS then Accion is ATACAR", engine));
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is POCO and Distancia is MEDIA and NumeroPills is POCAS then Accion is ATACAR", engine));
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is POCO and Distancia is MEDIA and NumeroPills is MUCHAS then Accion is HUIR", engine));
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is POCO and Distancia is CERCA and NumeroPowerPills is not NINGUNA then Accion is HUIR", engine));
-
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is MUY_POCO and NumeroPills is not POCAS and Distancia is not LEJOS then Accion is ATACAR", engine));
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is MUY_POCO and NumeroPills is not POCAS and Distancia is LEJOS then Accion is ESPERAR", engine));
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is MUY_POCO and NumeroPills is POCAS then Accion is ATACAR", engine));
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is MUY_POCO and NumeroPowerPills is MUCHAS and Distancia is LEJOS then Accion is ESPERAR", engine));
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is MUY_POCO and NumeroPowerPills is MUCHAS and Distancia is not LEJOS then Accion is ATACAR", engine));
-
-		mis_reglas.addRule(Rule.parse("if TiempoEdible is MUY_POCO and NumeroPowerPills is not MUCHAS then Accion is ATACAR", engine));
-
+		
+		Object[] variables = variables_input.keySet().toArray();
+		
+		SistemaCodec sistema = new SistemaCodec();
+		String[] accion = sistema.decodificar(genotipo);
+		
+		int count = 0;
+		String[] input_0 = variables_input.get(variables[0]);
+		for(int i0 = 0; i0 < input_0.length; i0++){
+			String[] input_1 = variables_input.get(variables[1]);
+			for(int i1 = 0; i1 < input_1.length; i1++){
+				String[] input_2 = variables_input.get(variables[2]);
+				for(int i2 = 0; i2 < input_2.length; i2++){
+					String[] input_3 = variables_input.get(variables[3]);
+					for(int i3 = 0; i3 < input_3.length; i3++){
+						reglas_string[count] = "if " + variables[0].toString() + " is " + input_0[i0] +
+											   " and " + variables[1].toString() + " is " + input_1[i1] +
+											   " and " + variables[2].toString() + " is " + input_2[i2] +
+											   " and " + variables[3].toString() + " is " + input_3[i3] +
+											   " then Accion is " + accion[count];
+						
+						mis_reglas.addRule(Rule.parse(reglas_string[count], engine));
+						count++;
+					}//for_4
+				}//for_3
+			}//for_2
+		}//for_1
 	}//init
 
 	public Engine meterReglas(Engine motor){
@@ -49,6 +79,10 @@ public class Reglas_Pacman {
 
 	public RuleBlock getMisReglas() {
 		return mis_reglas;
+	}//getReglas
+	
+	public String[] getStringReglas() {
+		return reglas_string;
 	}//getReglas
 
 }//class

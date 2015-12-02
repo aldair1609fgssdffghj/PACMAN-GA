@@ -5,6 +5,8 @@ public class MiTrapecio {
 
 	double[] param = new double[4];
 
+	public MiTrapecio(){};
+	
 	public MiTrapecio(double uno, double dos, double tres, double cuatro){
 		this.param[0] = uno;
 		this.param[1] = dos;
@@ -17,6 +19,12 @@ public class MiTrapecio {
 			param[i] = 0;
 		}
 	}//init
+
+	public void initRandom(){
+		for(int i = 0; i < param.length; i++){
+			param[i] = 0;
+		}
+	}
 
 
 	/* GETTERS AND SETTERS */

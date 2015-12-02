@@ -6,8 +6,6 @@ package acedo.quique.GA;
  * @version 1.0
  */
 
-import java.util.Collections;
-import java.util.Random;        // for generating random numbers
 import java.util.ArrayList;     // arrayLists are more versatile than arrays
 
 
@@ -22,7 +20,7 @@ import java.util.ArrayList;     // arrayLists are more versatile than arrays
 
 public class GeneticAlgorithm {
 	/** CONSTANTES **/
-	static int CHROMOSOME_SIZE=10;
+	static int CHROMOSOME_SIZE=256;
 	static int POPULATION_SIZE=500;
 
 	/** VARIABLES **/
@@ -32,6 +30,10 @@ public class GeneticAlgorithm {
 	 * a simple array is due to extra functionalities of the arrayList, such as sorting)
 	 */
 	ArrayList<Gene> mPopulation;
+	
+	public ArrayList<Gene> getPopulation(){
+		return mPopulation;
+	}//getPopulation
 
 	/** METODOS **/
 

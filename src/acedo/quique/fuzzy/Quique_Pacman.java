@@ -1,104 +1,134 @@
 package acedo.quique.fuzzy;
 
-import java.util.EnumMap;
 import com.fuzzylite.Engine;
 import pacman.controllers.Controller;
 import pacman.game.Constants.*;
 import pacman.game.Game;
 
-public class Quique_Pacman extends Controller<EnumMap<GHOST,MOVE>>{
+public class Quique_Pacman extends Controller<MOVE>{
 
-	
-	EnumMap<GHOST, MOVE> movimientos = new EnumMap<GHOST, MOVE>(GHOST.class);
+
+	MOVE movimiento;
+
 	Engine motor= new Engine();
 	Inputs_Pacman inputs = new Inputs_Pacman();
 	Outputs_Pacman outputs = new Outputs_Pacman();
-	Reglas_Pacman reglas = new Reglas_Pacman();
+	Reglas_Pacman reglas = new Reglas_Pacman(inputs.getVariables());
 
 	/**
-	 * Constructor de la clase Quique_Pacman
+	 * Init de la clase Quique_Pacman
 	 * Inicaliza las variables input y output y las reglas 
 	 * y las agrega al motor
 	 */
-	public Quique_Pacman(){
+	public void init(int[] genotipo){
 		motor.setName("Fuzzy-Pacman");
 
 		// Inicializamos los inputs
 		inputs.init();
-		
+
 		// Inicializamos los outputs
 		outputs.init();
-		
+
 		// Agregamos los inputs al motor
 		motor = inputs.meterVariables(motor);
-		
+
 		// Agregamos los outputs al motor
 		motor = outputs.meterVariables(motor);
-		
+
 		// Iniciamos las reglas
-		reglas.init(motor);
-		
+		reglas.init(motor, genotipo);
+
 		// Agregamos las reglas al motor
 		motor = reglas.meterReglas(motor);		
 
 	}//constructor
 
-	
-	public EnumMap<GHOST, MOVE> getMove(Game juego, long timeDue) {
+
+	public MOVE getMove(Game juego, long timeDue) {
+
+		double short_distance_to_ghots = 150;
+		double short_time_edible = pacman.game.Constants.EDIBLE_TIME;
 
 		for(GHOST fantasma : GHOST.values()){	//para cada fantasma
-			if(juego.doesGhostRequireAction(fantasma)){		//si requiere una accion
+			// Distancia a pacman
+			double short_distance_to_ghots_aux = juego.getShortestPathDistance(juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanCurrentNodeIndex());
+			// Si es mas pequeña, actualizo
+			if(short_distance_to_ghots > short_distance_to_ghots_aux)
+				short_distance_to_ghots = short_distance_to_ghots_aux;
 
-				double distance_to_pacman = juego.getShortestPathDistance(juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanCurrentNodeIndex());
-				double time_edible = juego.getGhostEdibleTime(fantasma);
-				double number_power_pills = juego.getActivePowerPillsIndices().length;
-				double number_pills = juego.getActivePillsIndices().length;
+			// Tiempo Edible
+			double time_edible_aux = juego.getGhostEdibleTime(fantasma);
+			// Si es mas pequeña, actualizo
+			if(short_time_edible > time_edible_aux)
+				short_time_edible = time_edible_aux;
 
-				inputs.getTiempoEdible().setInputValue(time_edible);
-				inputs.getDistanciaPowerPills().setInputValue(number_power_pills);
-				inputs.getNumeroPills().setInputValue(number_pills);
-
-				motor.process();
-				
-//				System.out.println("********** " + outputs.getAccion().defuzzify() + " **********");
-
-				if(outputs.getAccion().defuzzify() < 3.333)
-					movimientos.put(fantasma, huir(fantasma, juego));
-
-				else if(outputs.getAccion().defuzzify() > 6.666)
-					movimientos.put(fantasma, atacar(fantasma,juego));
-
-				else if(outputs.getAccion().defuzzify() >= 3.333 && outputs.getAccion().defuzzify() <= 6.666)
-					movimientos.put(fantasma, esperar(fantasma,juego));
-
-			}//if
 		}//for 
 
-		return movimientos;
+		int[] powerPills = juego.getActivePowerPillsIndices();
+		double short_distance_to_power = 150;
+
+		for(int i = 0; i < powerPills.length; i++){
+			double short_distance_to_power_aux = juego.getShortestPathDistance(juego.getPowerPillIndex(powerPills[i]),juego.getPacmanCurrentNodeIndex());
+			// Si es mas pequeña, actualizo
+			if(short_distance_to_power > short_distance_to_power_aux)
+				short_distance_to_power = short_distance_to_power_aux;
+		}//for
+
+		int[] pills = juego.getActivePillsIndices();
+		double short_distance_to_pill = 150;
+
+		for(int i = 0; i < powerPills.length; i++){
+			double short_distance_to_pill_aux = juego.getShortestPathDistance(juego.getPillIndex(pills[i]),juego.getPacmanCurrentNodeIndex());
+			// Si es mas pequeña, actualizo
+			if(short_distance_to_pill > short_distance_to_pill_aux)
+				short_distance_to_pill = short_distance_to_pill_aux;
+		}//for
+
+		inputs.getDistanciaGhosts().setInputValue(short_distance_to_ghots);
+		inputs.getTiempoEdible().setInputValue(short_time_edible);
+		inputs.getDistanciaPowerPills().setInputValue(short_distance_to_power);
+		inputs.getDistanciaPills().setInputValue(short_distance_to_pill);
+
+		motor.process();
+
+		//				System.out.println("********** " + outputs.getAccion().defuzzify() + " **********");
+
+		if(outputs.getAccion().defuzzify() < 3.333)
+			movimiento= huir(juego);
+
+		else if(outputs.getAccion().defuzzify() > 6.666)
+			movimiento= atacar(juego);
+
+		else if(outputs.getAccion().defuzzify() >= 3.333 && outputs.getAccion().defuzzify() <= 6.666)
+			movimiento = comer(juego);
+
+
+		return movimiento;
 	}//getMove()
 
 	/**
 	 * 
-	 * @param fantasma
 	 * @param juego
 	 * @return siguiente movimiento para atacar a Pacman
 	 */
-	private MOVE atacar(GHOST fantasma, Game juego){
-//		System.out.println("************ ATACANDO *************");
-		return juego.getApproximateNextMoveTowardsTarget(juego.getGhostCurrentNodeIndex(fantasma),
-				juego.getPacmanCurrentNodeIndex(),juego.getGhostLastMoveMade(fantasma),DM.PATH);
+	private MOVE atacar(Game juego){
+		//		System.out.println("************ ATACANDO *************");
+
+		GHOST fantasma = fantasmaEdibleCercano(juego);
+		return juego.getApproximateNextMoveTowardsTarget(juego.getPacmanCurrentNodeIndex(),
+			    juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanLastMoveMade(),DM.PATH);
 	}//atacar
 
 	/**
 	 * 
-	 * @param fantasma
 	 * @param juego
 	 * @return sigiuente movimiento para huir de Pacman
 	 */
-	private MOVE huir(GHOST fantasma, Game juego){
-//		System.out.println("************ HUYENDO *************");
-		return juego.getApproximateNextMoveAwayFromTarget(juego.getGhostCurrentNodeIndex(fantasma),
-				juego.getPacmanCurrentNodeIndex(),juego.getGhostLastMoveMade(fantasma),DM.PATH);
+	private MOVE huir(Game juego){
+		//		System.out.println("************ HUYENDO *************");
+		GHOST fantasma = fantasmaEdibleCercano(juego);
+		return juego.getApproximateNextMoveAwayFromTarget(juego.getPacmanCurrentNodeIndex(),
+				juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanLastMoveMade(),DM.PATH);
 	}//huir
 
 	/**
@@ -108,27 +138,53 @@ public class Quique_Pacman extends Controller<EnumMap<GHOST,MOVE>>{
 	 * @param juego
 	 * @return siguiente movimiento hacia la Power-Pill mas cercana o sino, Random
 	 */
-	private MOVE esperar(GHOST fantasma, Game juego){
-//		System.out.println("************ ESPERANDO *************");
+	private MOVE comer(Game juego){
+		//		System.out.println("************ ESPERANDO *************");
 
-		int[] powerPills = juego.getPowerPillIndices();
-		int distancia_a_power_pill = 0;
-		int siguiente_power_pill = -1;
+		int[] pills = juego.getPillIndices();
+		int distancia_a_pill = 0;
+		int siguiente_pill = -1;
 
-		for(int i = 0; i < powerPills.length; i++){
-			if(juego.isPowerPillStillAvailable(powerPills[i]))
-				if(juego.getShortestPathDistance(juego.getGhostCurrentNodeIndex(fantasma), powerPills[i]) > distancia_a_power_pill){
-					distancia_a_power_pill = juego.getShortestPathDistance(juego.getGhostCurrentNodeIndex(fantasma), powerPills[i]);
-					siguiente_power_pill = powerPills[i];
+		for(int i = 0; i < pills.length; i++){
+			if(juego.isPillStillAvailable(pills[i]))
+				if(juego.getShortestPathDistance(juego.getPacmanCurrentNodeIndex(), pills[i]) > distancia_a_pill){
+					distancia_a_pill = juego.getShortestPathDistance(juego.getPacmanCurrentNodeIndex(), pills[i]);
+					siguiente_pill = pills[i];
 				}//if
 		}//for
 
-		if(siguiente_power_pill < 0){
-			siguiente_power_pill = (int) Math.random()*juego.getActivePillsIndices().length;
-		}//if
-		
-		return juego.getApproximateNextMoveTowardsTarget(juego.getGhostCurrentNodeIndex(fantasma),
-				siguiente_power_pill,juego.getGhostLastMoveMade(fantasma),DM.PATH);
-	}//esperar
-	
+		return juego.getApproximateNextMoveTowardsTarget(juego.getPacmanCurrentNodeIndex(),
+				siguiente_pill,juego.getPacmanLastMoveMade(),DM.PATH);
+	}//comer
+
+	private GHOST fantasmaEdibleCercano(Game juego){
+		GHOST fantasma = null;
+
+		double short_distance_to_ghots = 150;
+
+		for(GHOST fantasma_aux : GHOST.values()){	//para cada fantasma
+			if(juego.isGhostEdible(fantasma_aux)){
+				// Distancia a pacman
+				double short_distance_to_ghots_aux = juego.getShortestPathDistance(juego.getGhostCurrentNodeIndex(fantasma_aux),juego.getPacmanCurrentNodeIndex());
+				// Si es mas pequeña, actualizo
+				if(short_distance_to_ghots > short_distance_to_ghots_aux){
+					short_distance_to_ghots = short_distance_to_ghots_aux;
+					fantasma = fantasma_aux;
+				}//if
+			}//if
+
+		}//for 
+		return fantasma;
+	}//fantasmaEdibleCercano
+
+
+	public String fenotipoToString(){
+		String result = "";
+		String[] reglas_string = reglas.getStringReglas();
+		for(int i = 0; i < reglas_string.length;i++)
+			result += reglas_string[i] + "\n";
+
+		return result;
+	}//toString
+
 }//class

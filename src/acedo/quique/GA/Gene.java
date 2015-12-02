@@ -39,11 +39,14 @@ public class Gene {
 	}//Constructor
 
 	/**
-	 * Randomizes the numbers on the mChromosome array to values 0 or 1
+	 * Randomizes the numbers on the mChromosome array to values 0 to 2
 	 */
 	public void randomizeChromosome(){
 		// code for randomization of initial weights goes HERE
 
+		for(int i = 0; i < mChromosome.length; i++){
+			mChromosome[i] = (int) (Math.random()*3);
+		}//for
 	}//randomizeChromosome
 
 	/**
@@ -135,5 +138,18 @@ public class Gene {
 		}//for
 		return result;
 	}//getPhenotype
+	
+	public int[] getChromosome(){
+		return mChromosome;
+	}//getChromosome
+
+	public String genotipoToString() {
+		String result = "";
+		
+		for(int i = 0; i < mChromosome.length; i++){
+			result += mChromosome[i] + " ";
+		}//for
+		return result;
+	}
 
 }//class
