@@ -1,4 +1,4 @@
-package acedo.quique.fuzzy;
+package acedo.quique.fuzzyPacman;
 
 import java.util.Iterator;
 import java.util.Scanner;
@@ -15,27 +15,32 @@ import acedo.quique.GA.GeneticAlgorithm;
 
 public class Test {
 
+	/**
+	 * Main method
+	 * @param args
+	 */
 	public static void main(String[] args) {
 
+		// Scanner para leer por teclado
 		Scanner entradaTeclado = new Scanner(System.in);
-		int poblacion_size;
 
+		// Le pregunto cuanta poblacion inicial desea
 		System.out.println("Cuanta poblacion inicial desea?");
-		poblacion_size = entradaTeclado.nextInt();
+		int poblacion_size = entradaTeclado.nextInt();
 
-
+		// Creo el algoritmo con el tamaño introducido por pantalla
 		GeneticAlgorithm genAl = new GeneticAlgorithm(poblacion_size);
 
 
-		Iterator<Gene> poblacion = genAl.getPopulation().iterator();
 
+		Iterator<Gene> poblacion = genAl.getPopulation().iterator();
 		int[] genotipo;
 		Quique_Pacman controladorQuique;
-
-
 		int opcion;
 		int count = 1;
 		boolean simular = false;
+		
+		// Recorro el iterador de la poblacion
 		while(poblacion.hasNext()){
 			boolean terminado = false;
 			System.out.println("\tGenerando genotipo "+ count++ +"...");

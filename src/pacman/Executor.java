@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
 
-import acedo.quique.fuzzy.QuiqueGhosts;
+import acedo.quique.fuzzyGHOSTS.QuiqueGhosts;
 import dataRecording.DataCollectorController;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;

@@ -1,4 +1,4 @@
-package acedo.quique.fuzzy;
+package acedo.quique.fuzzyGHOSTS;
 
 import com.fuzzylite.Engine;
 import com.fuzzylite.defuzzifier.Centroid;

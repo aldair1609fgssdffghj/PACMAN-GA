@@ -1,4 +1,4 @@
-package acedo.quique.fuzzy;
+package acedo.quique.fuzzyPacman;
 
 import com.fuzzylite.Engine;
 import pacman.controllers.Controller;

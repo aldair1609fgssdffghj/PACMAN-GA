@@ -1,4 +1,4 @@
-package acedo.quique.fuzzy;
+package acedo.quique.fuzzyPacman;
 
 /**
  * Reglas_Pacman.java
@@ -6,7 +6,6 @@ package acedo.quique.fuzzy;
  * @version 1.0
  * @date 2/12/2015
  */
-
 
 import java.util.HashMap;
 import com.fuzzylite.Engine;
@@ -16,6 +15,8 @@ import com.fuzzylite.rule.Rule;
 import com.fuzzylite.rule.RuleBlock;
 
 public class Reglas_Pacman {
+	
+	/** ATRIBUTOS */
 	private RuleBlock mis_reglas = new RuleBlock();
 
 	private RuleBlock[] reglas = {mis_reglas}; 

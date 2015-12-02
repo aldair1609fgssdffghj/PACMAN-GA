@@ -1,4 +1,4 @@
-package acedo.quique.fuzzy;
+package acedo.quique.fuzzyPacman;
 
 /**
  * Outputs_Pacman.java
@@ -14,21 +14,32 @@ import com.fuzzylite.term.Trapezoid;
 import com.fuzzylite.variable.OutputVariable;
 
 public class Outputs_Pacman {
-	
+
+	/** ATRIBUTOS */
 	private OutputVariable accion = new OutputVariable();
-	
+
 	private OutputVariable[] outputs = {accion};
 
+	/** METODOS */
 
+	/**
+	 * Metodo que inicializa las variables output
+	 */
 	public void init() {
+		// 1) Me creo los trapecios que van a dar forma a la grafica
 		MiTrapecio[] accion_param = new MiTrapecio[3];
 
+		// 2) Los inicializo
 		for(int i = 0; i < accion_param.length; i++){
 			accion_param[i] = new MiTrapecio();
-			accion_param[i].init();
 		}//for
 
-
+		// 3) Meto los valores
+		accion_param[0].setParam(0.000, 0.000, 0.000, 5.000);
+		accion_param[1].setParam(2.500, 3.750, 6.250, 7.500);
+		accion_param[2].setParam(5.000, 10.000, 10.000, 10.000);
+		
+		// 4) Inicializo la variable input
 		accion.setEnabled(true);
 		accion.setName("Accion");
 		accion.setRange(0.000, 10.000);
@@ -36,10 +47,11 @@ public class Outputs_Pacman {
 		accion.setDefuzzifier(new Centroid(200));
 		accion.setDefaultValue(0.00);
 
+		// 5) Creo las etiquetas de los nombres 
 		String[] valores_accion = {"HUIR", "COMER", "ATACAR"};
-		
-		double[] acccion_aux;
 
+		// 6) Añado los terminos al input
+		double[] acccion_aux;
 		for(int i = 0; i < valores_accion.length;i ++){
 			acccion_aux = accion_param[i].getParam();
 			accion.addTerm(new Trapezoid(valores_accion[i], acccion_aux[0], acccion_aux[1], acccion_aux[2], acccion_aux[3]));
@@ -47,6 +59,11 @@ public class Outputs_Pacman {
 
 	}//init
 
+	/**
+	 * Mete las variables en el motor
+	 * @param motor
+	 * @return el motor con las variables metidas
+	 */
 	public Engine meterVariables(Engine motor){
 
 		for(int i = 0; i < outputs.length; i++){
@@ -56,6 +73,7 @@ public class Outputs_Pacman {
 		return motor;
 	}//meterVariables
 
+	/** GETTERS AND SETTERS */
 	public OutputVariable getAccion() {
 		return accion;
 	}//getAccion
