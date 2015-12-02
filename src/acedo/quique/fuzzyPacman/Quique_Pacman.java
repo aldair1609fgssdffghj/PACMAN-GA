@@ -126,7 +126,7 @@ public class Quique_Pacman extends Controller<MOVE>{
 	 */
 	private MOVE huir(Game juego){
 		//		System.out.println("************ HUYENDO *************");
-		GHOST fantasma = fantasmaEdibleCercano(juego);
+		GHOST fantasma = fantasmaNoEdibleCercano(juego);
 		return juego.getApproximateNextMoveAwayFromTarget(juego.getPacmanCurrentNodeIndex(),
 				juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanLastMoveMade(),DM.PATH);
 	}//huir
@@ -164,6 +164,26 @@ public class Quique_Pacman extends Controller<MOVE>{
 
 		for(GHOST fantasma_aux : GHOST.values()){	//para cada fantasma
 			if(juego.isGhostEdible(fantasma_aux)){
+				// Distancia a pacman
+				double short_distance_to_ghots_aux = juego.getShortestPathDistance(juego.getGhostCurrentNodeIndex(fantasma_aux),juego.getPacmanCurrentNodeIndex());
+				// Si es mas pequeña, actualizo
+				if(short_distance_to_ghots > short_distance_to_ghots_aux){
+					short_distance_to_ghots = short_distance_to_ghots_aux;
+					fantasma = fantasma_aux;
+				}//if
+			}//if
+
+		}//for 
+		return fantasma;
+	}//fantasmaEdibleCercano
+	
+	private GHOST fantasmaNoEdibleCercano(Game juego){
+		GHOST fantasma = null;
+
+		double short_distance_to_ghots = 150;
+
+		for(GHOST fantasma_aux : GHOST.values()){	//para cada fantasma
+			if(!juego.isGhostEdible(fantasma_aux)){
 				// Distancia a pacman
 				double short_distance_to_ghots_aux = juego.getShortestPathDistance(juego.getGhostCurrentNodeIndex(fantasma_aux),juego.getPacmanCurrentNodeIndex());
 				// Si es mas pequeña, actualizo

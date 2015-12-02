@@ -6,7 +6,7 @@ import pacman.controllers.Controller;
 import pacman.game.Constants.*;
 import pacman.game.Game;
 
-public class QuiqueGhosts extends Controller<EnumMap<GHOST,MOVE>>{
+public class Quique_Ghosts extends Controller<EnumMap<GHOST,MOVE>>{
 
 	
 	EnumMap<GHOST, MOVE> movimientos = new EnumMap<GHOST, MOVE>(GHOST.class);
@@ -20,7 +20,7 @@ public class QuiqueGhosts extends Controller<EnumMap<GHOST,MOVE>>{
 	 * Inicaliza las variables input y output y las reglas 
 	 * y las agrega al motor
 	 */
-	public QuiqueGhosts(){
+	public Quique_Ghosts(){
 		motor.setName("Fuzzy-Ghost");
 
 		// Inicializamos los inputs

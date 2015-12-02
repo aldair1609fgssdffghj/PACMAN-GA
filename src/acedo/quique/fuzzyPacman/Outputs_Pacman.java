@@ -27,7 +27,7 @@ public class Outputs_Pacman {
 	 */
 	public void init() {
 		// 1) Me creo los trapecios que van a dar forma a la grafica
-		MiTrapecio[] accion_param = new MiTrapecio[3];
+		MiTrapecio[] accion_param = new MiTrapecio[4];
 
 		// 2) Los inicializo
 		for(int i = 0; i < accion_param.length; i++){
@@ -35,9 +35,10 @@ public class Outputs_Pacman {
 		}//for
 
 		// 3) Meto los valores
-		accion_param[0].setParam(0.000, 0.000, 0.000, 5.000);
-		accion_param[1].setParam(2.500, 3.750, 6.250, 7.500);
-		accion_param[2].setParam(5.000, 10.000, 10.000, 10.000);
+		accion_param[0].setParam(0.000, 0.000, 0.000, 3.500);
+		accion_param[1].setParam(1.500, 3.500, 3.500, 5.500);
+		accion_param[2].setParam(4.400, 6.500, 6.500, 8.500);
+		accion_param[3].setParam(6.500, 10.000, 10.000, 10.000);
 		
 		// 4) Inicializo la variable input
 		accion.setEnabled(true);
@@ -48,7 +49,7 @@ public class Outputs_Pacman {
 		accion.setDefaultValue(0.00);
 
 		// 5) Creo las etiquetas de los nombres 
-		String[] valores_accion = {"HUIR", "COMER", "ATACAR"};
+		String[] valores_accion = {"HUIR", "COMER_POWER", "COMER_PILL", "ATACAR"};
 
 		// 6) Añado los terminos al input
 		double[] acccion_aux;

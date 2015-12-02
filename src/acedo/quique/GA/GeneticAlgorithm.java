@@ -7,6 +7,9 @@ package acedo.quique.GA;
  */
 
 import java.util.ArrayList;     // arrayLists are more versatile than arrays
+import acedo.quique.fuzzyGHOSTS.Quique_Ghosts;
+import acedo.quique.fuzzyPacman.Quique_Pacman;
+import pacman.Executor;
 
 
 /**
@@ -20,7 +23,7 @@ import java.util.ArrayList;     // arrayLists are more versatile than arrays
 
 public class GeneticAlgorithm {
 	/** CONSTANTES **/
-	static int CHROMOSOME_SIZE=256;
+	static int CHROMOSOME_SIZE=256*2;
 	static int POPULATION_SIZE=500;
 
 	/** VARIABLES **/
@@ -30,7 +33,7 @@ public class GeneticAlgorithm {
 	 * a simple array is due to extra functionalities of the arrayList, such as sorting)
 	 */
 	ArrayList<Gene> mPopulation;
-	
+
 	public ArrayList<Gene> getPopulation(){
 		return mPopulation;
 	}//getPopulation
@@ -50,7 +53,7 @@ public class GeneticAlgorithm {
 			mPopulation.add(entry);
 		}//for
 	}//Constructor
-	
+
 	/**
 	 * For all members of the population, runs a heuristic that evaluates their fitness
 	 * based on their phenotype. The evaluation of this problem's phenotype is fairly simple,
@@ -59,11 +62,22 @@ public class GeneticAlgorithm {
 	 * evaluated (e.g based on its performance)
 	 */
 	public void evaluateGeneration(){
+		Executor executor = new Executor();
+
+		Quique_Ghosts controladorFantasmas = new Quique_Ghosts();
+		Quique_Pacman controladorPacman = new Quique_Pacman();
+
 		for(int i = 0; i < mPopulation.size(); i++){
-			// evaluation of the fitness function for each gene in the population goes HERE
+			Gene gen = mPopulation.get(i);
+			if(!gen.isEvaluado()){ 
+				controladorPacman.init(mPopulation.get(i).getChromosome());
+				executor.runExperiment(controladorPacman, controladorFantasmas, 100);
+			}//if
 		}//for
 	}//evaluateGeneration
 	
+//	private 
+
 	/**
 	 * With each gene's fitness as a guide, chooses which genes should mate and produce offspring.
 	 * The offspring are added to the population, replacing the previous generation's Genes either
@@ -118,7 +132,7 @@ public class GeneticAlgorithm {
 			for(int i = 0; i < population.size(); i++){
 				float currFitness = population.getGene(i).getFitness();
 				avgFitness += currFitness;
-				
+
 				if(currFitness < minFitness){
 					minFitness = currFitness;
 					worstIndividual = population.getGene(i).getPhenotype();

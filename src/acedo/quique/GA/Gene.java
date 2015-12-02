@@ -24,6 +24,8 @@ public class Gene {
 	 * using a boolean type to make computations easier)
 	 */
 	protected int mChromosome[];
+	
+	protected boolean evaluado;
 
 	/** METODOS **/
 	/**
@@ -36,6 +38,7 @@ public class Gene {
 		mChromosome = new int[GeneticAlgorithm.CHROMOSOME_SIZE];
 		// initializing fitness
 		mFitness = 0.f;
+		evaluado = false;
 	}//Constructor
 
 	/**
@@ -45,7 +48,7 @@ public class Gene {
 		// code for randomization of initial weights goes HERE
 
 		for(int i = 0; i < mChromosome.length; i++){
-			mChromosome[i] = (int) (Math.random()*3);
+			mChromosome[i] = (int) (Math.random()*2);
 		}//for
 	}//randomizeChromosome
 
@@ -150,6 +153,14 @@ public class Gene {
 			result += mChromosome[i] + " ";
 		}//for
 		return result;
-	}
+	}//genotipoToString
+	
+	public void setEvaluado(boolean estado){
+		evaluado = estado;
+	}//setEvaluado
+	
+	public boolean isEvaluado(){
+		return evaluado;
+	}//getEvaluado
 
 }//class
