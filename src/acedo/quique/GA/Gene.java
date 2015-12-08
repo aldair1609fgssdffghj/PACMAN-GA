@@ -24,7 +24,7 @@ public class Gene {
 	 * using a boolean type to make computations easier)
 	 */
 	protected int mChromosome[];
-	
+
 	protected boolean evaluado;
 
 	/** METODOS **/
@@ -42,7 +42,7 @@ public class Gene {
 	}//Constructor
 
 	/**
-	 * Randomizes the numbers on the mChromosome array to values 0 to 2
+	 * Randomizes the numbers on the mChromosome array to values 0 to 1
 	 */
 	public void randomizeChromosome(){
 		// code for randomization of initial weights goes HERE
@@ -63,8 +63,58 @@ public class Gene {
 	 * These offspring will need to be added to the next generation.
 	 */
 	public Gene[] reproduce(Gene other){
+		System.out.println("\tReproduciendo: ");
+
 		Gene[] result = new Gene[2];
+
 		// initilization of offspring chromosome goes HERE
+		for(int i = 0; i < result.length; i++){
+			result[i] = new Gene();
+		}//for
+
+		// Cruce en 2 puntos
+
+		//Genero los 2 puntos Random corte1 < corte
+		int corte1 = (int) (Math.random()*mChromosome.length);
+		int corte2 = (int) (Math.random()*mChromosome.length);
+
+		if(corte1 > corte2){
+			int aux = corte1;
+			corte1 = corte2;
+			corte2 = aux;
+		}//if
+
+		System.out.println(this.genotipoToString());
+		System.out.println(other.genotipoToString());
+		System.out.println("\t Corte 1: "+corte1 + "\tCorte 2: " + corte2);
+		System.out.println("GENERAN:");
+		//Desde 0 hasta el primer punto
+		// result[0] --> this
+		// result[1] --> other
+		for(int i = 0; i < corte1;i++){
+			result[0].mChromosome[i] = mChromosome[i];
+			result[1].mChromosome[i] = other.mChromosome[i];
+		}//for1
+
+		//Desde corte1 hasta el corte2
+		// result[0] --> other
+		// result[1] --> this
+		for(int i = corte1; i < corte2;i++){
+			result[0].mChromosome[i] = other.mChromosome[i];
+			result[1].mChromosome[i] = mChromosome[i];
+		}//for1
+
+		//Desde corte2 hasta el final
+		// result[0] --> this
+		// result[1] --> other
+		for(int i = corte2; i < mChromosome.length;i++){
+			result[0].mChromosome[i] = mChromosome[i];
+			result[1].mChromosome[i] = other.mChromosome[i];
+		}//for1
+
+		for(int i= 0; i < result.length; i++){
+			System.out.println(result[i].genotipoToString());
+		}//for
 		return result;
 	}//reproduce
 
@@ -76,8 +126,27 @@ public class Gene {
 	 * or (more often) on a gene which will not produce any offspring afterwards.
 	 */
 	public void mutate(){
+		
+		System.out.println("\tMutando: ");
+		System.out.println(this.genotipoToString());
+		//Genero los 2 puntos Random corte1 < corte
+		// Mutacion por intercambio
+		// Cojo 2 genes aleatorios del gen
+		int gen1 = (int) (Math.random()*mChromosome.length);
+		int gen2 = (int) (Math.random()*mChromosome.length);
 
+		System.out.println("\tCambio de gen 1: "+gen1 + "\tgen 2: " + gen2);
 
+		// Los intercambio
+		int aux = mChromosome[gen1];
+		mChromosome[gen1] = mChromosome[gen2];
+		mChromosome[gen2] = aux;
+
+		//Pongo evaluado a false
+		evaluado = false;
+		
+		System.out.println("\tHa mutado a: ");
+		System.out.println(this.genotipoToString());
 	}//mutate
 
 	/**
@@ -87,7 +156,7 @@ public class Gene {
 	public void setFitness(float value) { 
 		mFitness = value; 
 	}//setFitness
-	
+
 	/**
 	 * @return the gene's fitness value
 	 */
@@ -141,24 +210,24 @@ public class Gene {
 		}//for
 		return result;
 	}//getPhenotype
-	
+
 	public int[] getChromosome(){
 		return mChromosome;
 	}//getChromosome
 
 	public String genotipoToString() {
 		String result = "";
-		
+
 		for(int i = 0; i < mChromosome.length; i++){
 			result += mChromosome[i] + " ";
 		}//for
 		return result;
 	}//genotipoToString
-	
+
 	public void setEvaluado(boolean estado){
 		evaluado = estado;
 	}//setEvaluado
-	
+
 	public boolean isEvaluado(){
 		return evaluado;
 	}//getEvaluado

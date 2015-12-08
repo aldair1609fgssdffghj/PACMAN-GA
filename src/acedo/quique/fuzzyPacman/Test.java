@@ -39,7 +39,7 @@ public class Test {
 		int opcion;
 		int count = 1;
 		boolean simular = false;
-		
+
 		// Recorro el iterador de la poblacion
 		while(poblacion.hasNext()){
 			boolean terminado = false;
@@ -71,9 +71,32 @@ public class Test {
 				}//if-else
 			}//while
 		}//while
+
+		// TEST DE REPRODUCCION
+		System.out.println("\n\nGenes:");
+		for(int i = 0; i < genAl.size(); i++){
+			System.out.println("- " +i);
+		}//for
+
+		System.out.println("\t¿Que genes desea reproducir?");
+		int gen1 = entradaTeclado.nextInt();
+		int gen2 = entradaTeclado.nextInt();
+
+		genAl.getGene(gen1).reproduce(genAl.getGene(gen2));
+
+		
+		// TEST DE MUTACION
+		System.out.println("\n\nGenes:");
+		for(int i = 0; i < genAl.size(); i++){
+			System.out.println("- " +i);
+		}//for
+
+		System.out.println("\t¿Que genes desea mutar?");
+		int gen3 = entradaTeclado.nextInt();
+
+		genAl.getGene(gen3).mutate();
 		
 		entradaTeclado.close();
-
 	}//main
 
 }//class
