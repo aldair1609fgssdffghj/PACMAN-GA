@@ -126,11 +126,11 @@ public class Gene {
 	 * or (more often) on a gene which will not produce any offspring afterwards.
 	 */
 	public void mutate(){
+		// Mutacion por intercambio
 		
 		System.out.println("\tMutando: ");
 		System.out.println(this.genotipoToString());
 		//Genero los 2 puntos Random corte1 < corte
-		// Mutacion por intercambio
 		// Cojo 2 genes aleatorios del gen
 		int gen1 = (int) (Math.random()*mChromosome.length);
 		int gen2 = (int) (Math.random()*mChromosome.length);
