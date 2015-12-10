@@ -13,7 +13,7 @@ public class SistemaCodec {
 	 * @param fenotipo
 	 * @return array de binarios representando numeros del 0-3 00|01|10|11|.....
 	 */
-	public int[] codificar(String[] fenotipo){
+	public static int[] codificar(String[] fenotipo){
 		int[] genotipo = new int[fenotipo.length * 2];
 
 		for(int i = 0; i < genotipo.length; i += 2){
@@ -48,7 +48,7 @@ public class SistemaCodec {
 	 * @param genotipo
 	 * @return array de String con el fenotipo
 	 */
-	public String[] decodificar(int[] genotipo){
+	public static String[] decodificar(int[] genotipo){
 		String[] fenotipo = new String[genotipo.length / 2];
 		
 		for(int i = 0; i < fenotipo.length; i++){
@@ -75,7 +75,7 @@ public class SistemaCodec {
 		return fenotipo;
 	}//decodificar
 	
-	private int binToInteger(int a, int b){
+	private static int binToInteger(int a, int b){
 		return (int) Integer.parseUnsignedInt(""+a+b, 2);
 	}//binToInteger
 

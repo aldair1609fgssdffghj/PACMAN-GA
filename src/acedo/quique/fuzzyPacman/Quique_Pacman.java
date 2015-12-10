@@ -113,10 +113,16 @@ public class Quique_Pacman extends Controller<MOVE>{
 	 */
 	private MOVE atacar(Game juego){
 		//		System.out.println("************ ATACANDO *************");
+		MOVE movimiento;
 
 		GHOST fantasma = fantasmaEdibleCercano(juego);
-		return juego.getApproximateNextMoveTowardsTarget(juego.getPacmanCurrentNodeIndex(),
-			    juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanLastMoveMade(),DM.PATH);
+		if(fantasma != null)
+			movimiento =  juego.getApproximateNextMoveTowardsTarget(juego.getPacmanCurrentNodeIndex(),
+					juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanLastMoveMade(),DM.PATH);
+		else 
+			movimiento = MOVE.NEUTRAL;
+		
+		return movimiento;
 	}//atacar
 
 	/**
@@ -126,9 +132,16 @@ public class Quique_Pacman extends Controller<MOVE>{
 	 */
 	private MOVE huir(Game juego){
 		//		System.out.println("************ HUYENDO *************");
+		MOVE movimiento;
 		GHOST fantasma = fantasmaNoEdibleCercano(juego);
-		return juego.getApproximateNextMoveAwayFromTarget(juego.getPacmanCurrentNodeIndex(),
-				juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanLastMoveMade(),DM.PATH);
+
+		if(fantasma != null)
+			movimiento = juego.getApproximateNextMoveAwayFromTarget(juego.getPacmanCurrentNodeIndex(),
+					juego.getGhostCurrentNodeIndex(fantasma),juego.getPacmanLastMoveMade(),DM.PATH);
+		else
+			movimiento = MOVE.NEUTRAL;
+
+		return movimiento;
 	}//huir
 
 	/**
@@ -172,11 +185,12 @@ public class Quique_Pacman extends Controller<MOVE>{
 					fantasma = fantasma_aux;
 				}//if
 			}//if
-
 		}//for 
+
+
 		return fantasma;
 	}//fantasmaEdibleCercano
-	
+
 	private GHOST fantasmaNoEdibleCercano(Game juego){
 		GHOST fantasma = null;
 
@@ -192,8 +206,9 @@ public class Quique_Pacman extends Controller<MOVE>{
 					fantasma = fantasma_aux;
 				}//if
 			}//if
-
 		}//for 
+
+
 		return fantasma;
 	}//fantasmaEdibleCercano
 

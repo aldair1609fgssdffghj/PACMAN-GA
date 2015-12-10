@@ -135,6 +135,29 @@ public class Executor
 
 //		System.out.println(avgScore/trials);
 	}
+	
+	public double runMiExperiment(Controller<MOVE> pacManController,Controller<EnumMap<GHOST,MOVE>> ghostController,int trials)	{
+		double avgScore=0;
+
+		Random rnd=new Random(0);
+		Game game;
+
+		for(int i=0;i<trials;i++){
+			game=new Game(rnd.nextLong());
+
+			while(!game.gameOver()){
+				game.advanceGame(pacManController.getMove(game.copy(),System.currentTimeMillis()+DELAY),
+						ghostController.getMove(game.copy(),System.currentTimeMillis()+DELAY));
+			}//while
+
+			avgScore+=game.getScore();
+//			System.out.println(i + ";" +game.getScore()+";" +game.getCurrentLevel() +";" + game.getTotalTime());
+		}//for
+
+		avgScore = avgScore/trials;
+//		System.out.println(avgScore/trials);
+		return avgScore;
+	}
 
 	/**
 	 * Run a game in asynchronous mode: the game waits until a move is returned. In order to slow thing down in case

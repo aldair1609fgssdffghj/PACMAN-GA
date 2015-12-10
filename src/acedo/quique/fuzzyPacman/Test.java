@@ -1,7 +1,10 @@
 package acedo.quique.fuzzyPacman;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Scanner;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 import acedo.quique.GA.Gene;
 import acedo.quique.GA.GeneticAlgorithm;
@@ -84,7 +87,7 @@ public class Test {
 
 		genAl.getGene(gen1).reproduce(genAl.getGene(gen2));
 
-		
+
 		// TEST DE MUTACION
 		System.out.println("\n\nGenes:");
 		for(int i = 0; i < genAl.size(); i++){
@@ -95,7 +98,7 @@ public class Test {
 		int gen3 = entradaTeclado.nextInt();
 
 		genAl.getGene(gen3).mutate();
-		
+
 		entradaTeclado.close();
 	}//main
 

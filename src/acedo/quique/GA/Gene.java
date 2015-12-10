@@ -1,5 +1,7 @@
 package acedo.quique.GA;
 
+import acedo.quique.fuzzyPacman.SistemaCodec;
+
 /**
  * @author Quique
  * @date 25/11/2015
@@ -18,7 +20,7 @@ public class Gene {
 	 * this is not necessary: the only constraint is that a better solution
 	 * must have a strictly higher fitness than a worse solution
 	 */
-	protected float mFitness;
+	protected double mFitness;
 	/**
 	 * The chromosome contains only integers 0 or 1 (we choose to avoid
 	 * using a boolean type to make computations easier)
@@ -115,6 +117,7 @@ public class Gene {
 		for(int i= 0; i < result.length; i++){
 			System.out.println(result[i].genotipoToString());
 		}//for
+
 		return result;
 	}//reproduce
 
@@ -127,7 +130,7 @@ public class Gene {
 	 */
 	public void mutate(){
 		// Mutacion por intercambio
-		
+
 		System.out.println("\tMutando: ");
 		System.out.println(this.genotipoToString());
 		//Genero los 2 puntos Random corte1 < corte
@@ -142,9 +145,6 @@ public class Gene {
 		mChromosome[gen1] = mChromosome[gen2];
 		mChromosome[gen2] = aux;
 
-		//Pongo evaluado a false
-		evaluado = false;
-		
 		System.out.println("\tHa mutado a: ");
 		System.out.println(this.genotipoToString());
 	}//mutate
@@ -153,14 +153,14 @@ public class Gene {
 	 * Sets the fitness, after it is evaluated in the GeneticAlgorithm class.
 	 * @param value: the fitness value to be set
 	 */
-	public void setFitness(float value) { 
+	public void setFitness(double value) { 
 		mFitness = value; 
 	}//setFitness
 
 	/**
 	 * @return the gene's fitness value
 	 */
-	public float getFitness() { 
+	public double getFitness() { 
 		return mFitness; 
 	}//getFitness
 
@@ -199,16 +199,12 @@ public class Gene {
 	 */
 	public String getPhenotype() {
 		// create an empty string
-		String result="";
-		for(int i = 0; i < mChromosome.length; i++){
-			// populate it with either A's or a's, depending on the the
-			if(mChromosome[i]==1){
-				result+= "A";
-			} else {
-				result+= "a";
-			}//if-else
-		}//for
-		return result;
+
+		String[] result = SistemaCodec.decodificar(mChromosome);
+		String fenotipo ="";
+		for(int i = 0; i < result.length; i++)
+			fenotipo +=  result[i] + " ";
+			return fenotipo;
 	}//getPhenotype
 
 	public int[] getChromosome(){
