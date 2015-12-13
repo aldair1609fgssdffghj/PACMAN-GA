@@ -1,5 +1,7 @@
 package acedo.quique.GA;
 
+import java.util.Random;
+
 import acedo.quique.fuzzyPacman.SistemaCodec;
 
 /**
@@ -55,7 +57,7 @@ public class Gene {
 	}//randomizeChromosome
 
 	/**
-	 * Creates a number of offspring by combining (using crossover) the current
+	 * Creates a number of offspring by combining (usando Cruce en 2 puntos) the current
 	 * Gene's chromosome with another Gene's chromosome.
 	 * Usually two parents will produce an equal amount of offpsring, although
 	 * in other reproduction strategies the number of offspring produced depends
@@ -65,7 +67,7 @@ public class Gene {
 	 * These offspring will need to be added to the next generation.
 	 */
 	public Gene[] reproduce(Gene other){
-		System.out.println("\tReproduciendo: ");
+		//System.out.println("\tReproduciendo: ");
 
 		Gene[] result = new Gene[2];
 
@@ -77,8 +79,9 @@ public class Gene {
 		// Cruce en 2 puntos
 
 		//Genero los 2 puntos Random corte1 < corte
-		int corte1 = (int) (Math.random()*mChromosome.length);
-		int corte2 = (int) (Math.random()*mChromosome.length);
+		Random rand = new Random();
+		int corte1 = rand.nextInt(mChromosome.length);
+		int corte2 = rand.nextInt(mChromosome.length);
 
 		if(corte1 > corte2){
 			int aux = corte1;
@@ -86,10 +89,10 @@ public class Gene {
 			corte2 = aux;
 		}//if
 
-		System.out.println(this.genotipoToString());
-		System.out.println(other.genotipoToString());
-		System.out.println("\t Corte 1: "+corte1 + "\tCorte 2: " + corte2);
-		System.out.println("GENERAN:");
+		//System.out.println(this.genotipoToString());
+		//System.out.println(other.genotipoToString());
+		//System.out.println("\t Corte 1: "+corte1 + "\tCorte 2: " + corte2);
+		//System.out.println("GENERAN:");
 		//Desde 0 hasta el primer punto
 		// result[0] --> this
 		// result[1] --> other
@@ -114,40 +117,55 @@ public class Gene {
 			result[1].mChromosome[i] = other.mChromosome[i];
 		}//for1
 
-		for(int i= 0; i < result.length; i++){
-			System.out.println(result[i].genotipoToString());
-		}//for
+//		for(int i= 0; i < result.length; i++){
+//			System.out.println(result[i].genotipoToString());
+//		}//for
 
 		return result;
 	}//reproduce
 
 	/**
-	 * Mutates a gene using inversion, random mutation or other methods.
-	 * This function is called after the mutation chance is rolled.
-	 * Mutation can occur (depending on the designer's wishes) to a parent
-	 * before reproduction takes place, an offspring at the time it is created,
-	 * or (more often) on a gene which will not produce any offspring afterwards.
+	 * Mutates a gene using inversion.
+	 * Se llama por cada individuo producido
+	 * Se produce el 30% de las veces
 	 */
 	public void mutate(){
 		// Mutacion por intercambio
 
-		System.out.println("\tMutando: ");
-		System.out.println(this.genotipoToString());
-		//Genero los 2 puntos Random corte1 < corte
-		// Cojo 2 genes aleatorios del gen
-		int gen1 = (int) (Math.random()*mChromosome.length);
-		int gen2 = (int) (Math.random()*mChromosome.length);
+		//System.out.println("\tMutando: ");
+		//System.out.println(this.genotipoToString());
+		//Selecciono 5 genes al azar
+		Random rand = new Random();
+		
+		int[] genes = new int[5];
+		for(int i = 0; i < genes.length; i++){
+			genes[i] = rand.nextInt(mChromosome.length);
+		}//for
 
-		System.out.println("\tCambio de gen 1: "+gen1 + "\tgen 2: " + gen2);
-
-		// Los intercambio
-		int aux = mChromosome[gen1];
-		mChromosome[gen1] = mChromosome[gen2];
-		mChromosome[gen2] = aux;
-
-		System.out.println("\tHa mutado a: ");
-		System.out.println(this.genotipoToString());
+		// Si es 1, lo pongo a 0, y si es 0, lo pongo a 1
+	
+		for(int i = 0; i < genes.length; i++){
+			mChromosome[i] = cambiarGen(mChromosome[i]);
+			}//for
+		
+//		System.out.println("\tHa mutado a: ");
+//		System.out.println(this.genotipoToString());
 	}//mutate
+
+	/**
+	 * 
+	 * @param a
+	 * @return ã (negada de A) si a = 0 --> 1; si a = 1 --> 0
+	 */
+	private int cambiarGen(int a){
+		int result = 0;
+		if(a == 0)
+			result = 1;
+		else if(a ==1)
+			result = 0;
+		
+		return result;
+	}
 
 	/**
 	 * Sets the fitness, after it is evaluated in the GeneticAlgorithm class.
@@ -204,7 +222,7 @@ public class Gene {
 		String fenotipo ="";
 		for(int i = 0; i < result.length; i++)
 			fenotipo +=  result[i] + " ";
-			return fenotipo;
+		return fenotipo;
 	}//getPhenotype
 
 	public int[] getChromosome(){

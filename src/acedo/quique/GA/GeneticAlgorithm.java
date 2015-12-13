@@ -8,10 +8,12 @@ package acedo.quique.GA;
 
 import java.util.ArrayList;     // arrayLists are more versatile than arrays
 import java.util.Collections;
+import java.util.Random;
 
-import acedo.quique.fuzzyGHOSTS.Quique_Ghosts;
+import acedo.quique.fuzzyGhosts.Quique_Ghosts;
 import acedo.quique.fuzzyPacman.Quique_Pacman;
 import pacman.Executor;
+
 
 
 /**
@@ -22,10 +24,10 @@ import pacman.Executor;
  *
  */
 
-public class GeneticAlgorithm {
+public class GeneticAlgorithm{
 	/** CONSTANTES **/
 	static int CHROMOSOME_SIZE=256*2;
-	static int POPULATION_SIZE=2;
+	static int POPULATION_SIZE=50;
 
 	/** VARIABLES **/
 
@@ -33,7 +35,7 @@ public class GeneticAlgorithm {
 	 * The population contains an ArrayList of genes (the choice of arrayList over
 	 * a simple array is due to extra functionalities of the arrayList, such as sorting)
 	 */
-	ArrayList<Gene> mPopulation;
+	static ArrayList<Gene> mPopulation;
 
 	public ArrayList<Gene> getPopulation(){
 		return mPopulation;
@@ -52,8 +54,89 @@ public class GeneticAlgorithm {
 			Gene entry = new Gene();
 			entry.randomizeChromosome();
 			mPopulation.add(entry);
+			//System.out.println("\tINDIVIDUO " + i + " random añadido");
 		}//for
+		//System.out.println("INICIALIZACION TERMINADA");
 	}//Constructor
+
+
+	// Genetic Algorithm maxA testing method
+	public static void main( String[] args ){
+		// Initializing the population (we chose 500 genes for the population,
+		// but you can play with the population size to try different approaches)
+		//System.out.println("START");
+		GeneticAlgorithm population = new GeneticAlgorithm(POPULATION_SIZE);
+		int generationCount = 0;
+		// For the sake of this sample, evolution goes on forever.
+		// If you wish the evolution to halt (for instance, after a number of
+		//   generations is reached or the maximum fitness has been achieved),
+		//   this is the place to make any such checks
+
+		double avgFitness = 0;
+		double minFitness;
+		double maxFitness;
+		Gene bestIndividuo = null;
+
+		while( avgFitness < 2500){
+
+			avgFitness=0.f;
+			minFitness=Float.POSITIVE_INFINITY;
+			maxFitness=Float.NEGATIVE_INFINITY;
+			bestIndividuo = null;
+			// --- evaluate current generation:
+			//System.out.println("\tEVALUANDO GENERACION "+ generationCount);
+			population.evaluateGeneration(mPopulation);
+			//System.out.println("\tGENERACION "+ generationCount + " EVALUADA");
+
+			// --- print results here:
+			// we choose to print the average fitness,
+			// as well as the maximum and minimum fitness
+			// as part of our progress monitoring
+			String bestIndividual="";
+			String worstIndividual="";
+
+			for(int i = 0; i < population.size(); i++){
+				Gene individuo_aux = population.getGene(i); 
+				double currFitness = individuo_aux.getFitness();
+				avgFitness += currFitness;
+
+				if(currFitness < minFitness){
+					minFitness = currFitness;
+					worstIndividual = population.getGene(i).genotipoToString();
+				}//if
+
+				if(currFitness > maxFitness){
+					maxFitness = currFitness;
+					bestIndividual = population.getGene(i).genotipoToString();
+					bestIndividuo = individuo_aux;
+				}//if
+			}//for
+
+			if(population.size()>0){ 
+				avgFitness = avgFitness/population.size(); 
+			}//if
+
+			String output = "Generation: " + generationCount;
+			output += "\t AvgFitness: " + avgFitness;
+			output += "\t MinFitness: " + minFitness + " (" + worstIndividual +")";
+			output += "\t MaxFitness: " + maxFitness + " (" + bestIndividual +")";
+
+
+			System.out.println(output);
+			// produce next generation:
+			//System.out.println("\t\tPRODUCIENDO "+ (generationCount+1));
+			population.produceNextGeneration();
+			//System.out.println("\t\tGENERACION "+ (generationCount+1) + " PRODUCIDA");
+
+			generationCount++;
+		}//while
+
+		Executor executor = new Executor();
+		Quique_Pacman controladorPacman = new Quique_Pacman();
+		controladorPacman.init(bestIndividuo.getChromosome());
+		executor.runGameTimed(controladorPacman,new Quique_Ghosts(),true);
+
+	}//main
 
 	/**
 	 * For all members of the population, runs a heuristic that evaluates their fitness
@@ -61,24 +144,34 @@ public class GeneticAlgorithm {
 	 * and can be done in a straightforward manner. In other cases, such as agent
 	 * behavior, the phenotype may need to be used in a full simulation before getting
 	 * evaluated (e.g based on its performance)
+	 * @param generacion 
 	 */
-	public void evaluateGeneration(){
-		Executor executor = new Executor();
+	public void evaluateGeneration(ArrayList<Gene> generacion){	
+		ArrayList<Evaluator> evaluadores = new ArrayList<Evaluator>();
 
-		Quique_Ghosts controladorFantasmas = new Quique_Ghosts();
-		Quique_Pacman controladorPacman = new Quique_Pacman();
-
-		for(int i = 0; i < mPopulation.size(); i++){
-			Gene gen = mPopulation.get(i);
+		for(int i = 0; i < generacion.size(); i++){
+			Gene gen = generacion.get(i);
 			if(!gen.isEvaluado()){ 
-				controladorPacman.init(mPopulation.get(i).getChromosome());
-				mPopulation.get(i).setFitness(executor.runMiExperiment(controladorPacman, controladorFantasmas, 2));
-				mPopulation.get(i).setEvaluado(true);
+				Evaluator evaluador = new Evaluator();
+				evaluador.setId(i);
+				evaluador.setGen(gen);
+				evaluador.start();
+				evaluadores.add(evaluador);
 			}//if
+			//else
+			//System.out.println("\t\tINDIVIDUO " + i + " YA HA SIDO EVALUADO PREVIAMENTE");
 		}//for
-	}//evaluateGeneration
 
-	//	private 
+		for(int j = 0; j < evaluadores.size(); j++){
+			try {
+				evaluadores.get(j).join();
+			} catch (InterruptedException e) {
+				// 
+				e.printStackTrace();
+			}
+		}
+
+	}//evaluateGeneration
 
 	/**
 	 * With each gene's fitness as a guide, chooses which genes should mate and produce offspring.
@@ -92,19 +185,21 @@ public class GeneticAlgorithm {
 		ArrayList<Gene> descendencia = new ArrayList<Gene>();
 
 		Gene individuo1, individuo2;
-		boolean reproducido = false;
 		final double PORCENTAJE_MUTACION = 3.00; 
-
+		//		int count = 0;
 		// Generar el doble individuos (el doble del tamaño de la población)
 		while(descendencia.size() < POPULATION_SIZE*2){
-
+			boolean reproducido = false;	
+			//			count++;
 			while(!reproducido){
+				//System.out.println("\t\tREPRODUCCION " + count);
 				individuo1 = seleccionarIndividuo(mPopulation);
 				individuo2 = seleccionarIndividuo(mPopulation);
 
 				if(individuo1.getChromosome() != individuo2.getChromosome()){
 					reproducido = true;
 					Gene[] genes = individuo1.reproduce(individuo2);
+					//System.out.println("\t\tREPRODUCCION " + count  + " TERMINADA");
 
 					double random;
 					for(int i = 0; i < genes.length; i++){
@@ -114,6 +209,7 @@ public class GeneticAlgorithm {
 							genes[i].mutate();
 						//lo guardamos en la lista de genes nuevos
 						descendencia.add(genes[i]);
+						//System.out.println("\t\t\t INDIVIDUO " + descendencia.size() + " METIDO");
 					}//for
 				}//if
 			}//while2
@@ -124,6 +220,32 @@ public class GeneticAlgorithm {
 
 		mPopulation = nuevaGeneracion;
 	}//produceNextGeneration
+
+	/**
+	 * Metodo que devuelve un arraylist con los individuos de la seleccion de la lista de actual y de la nueva
+	 * Mezcla las 2 listas, y luego va seleccionando, utilizando la seleccion por torneo, individuos hasta llenar
+	 * la nueva lista de individuos
+	 * @param actual
+	 * @param nueva
+	 * @return lista con los individuos de la nueva generacion
+	 */
+	private ArrayList<Gene> seleccionarNuevaGeneracion(ArrayList<Gene> actual, ArrayList<Gene> descendencia, int tamano){
+		ArrayList<Gene> nueva = new ArrayList<Gene>();
+		ArrayList<Gene> mezcla = mezclarListas(actual, descendencia);
+
+		//		int count = 1;
+		while(nueva.size() != tamano){
+			Gene individuo = seleccionarIndividuo(mezcla);
+			mezcla.remove(individuo);
+			nueva.add(seleccionarIndividuo(mezcla));
+			//System.out.println("\t\tINDIVIDUO " + count + " METIDDO EN LA NUEVA GENERACION");
+			//			count++;
+		}//while
+
+		evaluateGeneration(nueva);
+		return nueva;
+	}//seleccionarNuevaGeneracion
+
 
 
 	/**
@@ -146,10 +268,11 @@ public class GeneticAlgorithm {
 
 		// Para que no sean iguales los numeros aleatorios
 		while(!sonDistintos(individuo1, individuo2, individuo3, individuo4)){
-			individuo1 = (int) (Math.random()*poblacion.size());
-			individuo2 = (int) (Math.random()*poblacion.size());
-			individuo3 = (int) (Math.random()*poblacion.size());
-			individuo4 = (int) (Math.random()*poblacion.size());
+			Random rand = new Random();
+			individuo1 = rand.nextInt(poblacion.size());
+			individuo2 = rand.nextInt(poblacion.size());
+			individuo3 = rand.nextInt(poblacion.size());
+			individuo4 = rand.nextInt(poblacion.size());
 		}//while
 
 		Gene genA = mPopulation.get(max(individuo1, individuo2, poblacion));
@@ -189,25 +312,6 @@ public class GeneticAlgorithm {
 		return sonDistintos;
 	}//sonDistintos
 
-	/**
-	 * Metodo que devuelve un arraylist con los individuos de la seleccion de la lista de actual y de la nueva
-	 * Mezcla las 2 listas, y luego va seleccionando, utilizando la seleccion por torneo, individuos hasta llenar
-	 * la nueva lista de individuos
-	 * @param actual
-	 * @param nueva
-	 * @return lista con los individuos de la nueva generacion
-	 */
-	private ArrayList<Gene> seleccionarNuevaGeneracion(ArrayList<Gene> actual, ArrayList<Gene> descendencia, int tamano){
-		ArrayList<Gene> nueva = new ArrayList<Gene>();
-		ArrayList<Gene> mezcla = mezclarListas(actual, descendencia);
-
-		while(nueva.size() != tamano){
-			nueva.add(seleccionarIndividuo(mezcla));
-		}//while
-
-		return nueva;
-	}//seleccionarNuevaGeneracion
-
 
 	/**
 	 * Metodo que mezcla los elementos de 2 listas y los mete en una lista
@@ -240,56 +344,4 @@ public class GeneticAlgorithm {
 	}//getGene
 
 
-	// Genetic Algorithm maxA testing method
-	public static void main( String[] args ){
-		// Initializing the population (we chose 500 genes for the population,
-		// but you can play with the population size to try different approaches)
-		GeneticAlgorithm population = new GeneticAlgorithm(POPULATION_SIZE);
-		int generationCount = 0;
-		// For the sake of this sample, evolution goes on forever.
-		// If you wish the evolution to halt (for instance, after a number of
-		//   generations is reached or the maximum fitness has been achieved),
-		//   this is the place to make any such checks
-		while(true){
-			// --- evaluate current generation:
-			population.evaluateGeneration();
-			// --- print results here:
-			// we choose to print the average fitness,
-			// as well as the maximum and minimum fitness
-			// as part of our progress monitoring
-			double avgFitness=0.f;
-			double minFitness=Float.POSITIVE_INFINITY;
-			double maxFitness=Float.NEGATIVE_INFINITY;
-			String bestIndividual="";
-			String worstIndividual="";
-
-			for(int i = 0; i < population.size(); i++){
-				double currFitness = population.getGene(i).getFitness();
-				avgFitness += currFitness;
-
-				if(currFitness < minFitness){
-					minFitness = currFitness;
-					worstIndividual = population.getGene(i).getPhenotype();
-				}//if
-
-				if(currFitness > maxFitness){
-					maxFitness = currFitness;
-					bestIndividual = population.getGene(i).getPhenotype();
-				}//if
-			}//for
-
-			if(population.size()>0){ 
-				avgFitness = avgFitness/population.size(); 
-			}//if
-
-			String output = "Generation: " + generationCount;
-			output += "\t AvgFitness: " + avgFitness;
-			output += "\t MinFitness: " + minFitness + " (" + worstIndividual +")";
-			output += "\t MaxFitness: " + maxFitness + " (" + bestIndividual +")";
-			System.out.println(output);
-			// produce next generation:
-			population.produceNextGeneration();
-			generationCount++;
-		}//while
-	}//main
 }//class

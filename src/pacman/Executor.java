@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
 
-import acedo.quique.fuzzyGHOSTS.Quique_Ghosts;
+import acedo.quique.fuzzyGhosts.Quique_Ghosts;
 import dataRecording.DataCollectorController;
 import pacman.controllers.Controller;
 import pacman.controllers.HumanController;
@@ -93,7 +93,7 @@ public class Executor
 			
 //			System.out.println("\n---------- Juego NearestPillPacman "+i+" ----------");
 //			exec.runExperiment(new NearestPillPacMan(),new QuiqueGhosts(),numTrials);
-			exec.runGameTimed(new NearestPillPacMan(),new Quique_Ghosts(),visual);
+			//exec.runGameTimed(new NearestPillPacMan(),new Quique_Ghosts(),visual);
 //
 //			System.out.println("\n---------- Juego RandomPacMan "+i+" ----------");
 //			exec.runExperiment(new RandomPacMan(),new QuiqueGhosts(),numTrials);

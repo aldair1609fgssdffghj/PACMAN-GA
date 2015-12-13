@@ -1,4 +1,4 @@
-package acedo.quique.fuzzyGHOSTS;
+package acedo.quique.fuzzyGhosts;
 
 import java.util.EnumMap;
 import com.fuzzylite.Engine;
