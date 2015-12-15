@@ -24,7 +24,7 @@ public class Evaluator extends Thread{
 		Quique_Ghosts controladorFantasmas = new Quique_Ghosts();
 		Quique_Pacman controladorPacman = new Quique_Pacman();
 		controladorPacman.init(gen.getChromosome());
-		gen.setFitness(executor.runMiExperiment(controladorPacman, controladorFantasmas, 1));
+		gen.setFitness(executor.runMiExperiment(controladorPacman, controladorFantasmas, 100));
 //		System.out.println("\tIndviduo " + id + " evaluado");
 
 		

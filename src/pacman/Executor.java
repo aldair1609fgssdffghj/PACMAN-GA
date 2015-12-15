@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.Random;
 
+import acedo.quique.decisionTree.DecisionTreePacmanController;
 import acedo.quique.fuzzyGhosts.Quique_Ghosts;
 import dataRecording.DataCollectorController;
 import pacman.controllers.Controller;
@@ -83,22 +84,28 @@ public class Executor
 		exec.runGameTimedRecorded(new HumanController(new KeyBoardInput()),new RandomGhosts(),visual,fileName);
 		//exec.replayGame(fileName,visual);
 		 */
-		
+
 		boolean visual=true;
 		//run game for data collection
-//		System.out.println("Jugada; Puntuacion; Nivel; Tiempo");
+		//		System.out.println("Jugada; Puntuacion; Nivel; Tiempo");
 
-//			exec.runExperiment(new StarterPacMan(),new StarterGhosts(),1000);
-//			exec.runGameTimed(new StarterPacMan(),new QuiqueGhosts(),visual);
-			
-//			System.out.println("\n---------- Juego NearestPillPacman "+i+" ----------");
-//			exec.runExperiment(new NearestPillPacMan(),new QuiqueGhosts(),numTrials);
-			//exec.runGameTimed(new NearestPillPacMan(),new Quique_Ghosts(),visual);
-//
-//			System.out.println("\n---------- Juego RandomPacMan "+i+" ----------");
-//			exec.runExperiment(new RandomPacMan(),new QuiqueGhosts(),numTrials);
-////			exec.runGameTimed(new RandomPacMan(),new QuiqueGhosts(),visual);
-//			
+		//			exec.runExperiment(new StarterPacMan(),new StarterGhosts(),1000);
+		//			exec.runGameTimed(new StarterPacMan(),new QuiqueGhosts(),visual);
+
+		//			System.out.println("\n---------- Juego NearestPillPacman "+i+" ----------");
+
+		//		exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new Quique_Ghosts(),visual);
+
+		DecisionTreePacmanController controladorDTQuique = new DecisionTreePacmanController();
+
+		System.out.println(controladorDTQuique.toString());
+
+		//exec.runGameTimed(new NearestPillPacMan(),new Quique_Ghosts(),visual);
+		//
+		//			System.out.println("\n---------- Juego RandomPacMan "+i+" ----------");
+		//			exec.runExperiment(new RandomPacMan(),new QuiqueGhosts(),numTrials);
+		////			exec.runGameTimed(new RandomPacMan(),new QuiqueGhosts(),visual);
+		//			
 
 	}
 
@@ -133,9 +140,9 @@ public class Executor
 			System.out.println(i + ";" +game.getScore()+";" +game.getCurrentLevel() +";" + game.getTotalTime());
 		}
 
-//		System.out.println(avgScore/trials);
+		//		System.out.println(avgScore/trials);
 	}
-	
+
 	public double runMiExperiment(Controller<MOVE> pacManController,Controller<EnumMap<GHOST,MOVE>> ghostController,int trials)	{
 		double avgScore=0;
 
@@ -151,11 +158,11 @@ public class Executor
 			}//while
 
 			avgScore+=game.getScore();
-//			System.out.println(i + ";" +game.getScore()+";" +game.getCurrentLevel() +";" + game.getTotalTime());
+			//			System.out.println(i + ";" +game.getScore()+";" +game.getCurrentLevel() +";" + game.getTotalTime());
 		}//for
 
 		avgScore = avgScore/trials;
-//		System.out.println(avgScore/trials);
+		//		System.out.println(avgScore/trials);
 		return avgScore;
 	}
 

@@ -27,7 +27,7 @@ import pacman.Executor;
 public class GeneticAlgorithm{
 	/** CONSTANTES **/
 	static int CHROMOSOME_SIZE=256*2;
-	static int POPULATION_SIZE=50;
+	static int POPULATION_SIZE=100;
 
 	/** VARIABLES **/
 
@@ -77,7 +77,7 @@ public class GeneticAlgorithm{
 		double maxFitness;
 		Gene bestIndividuo = null;
 
-		while( avgFitness < 2500){
+		while( avgFitness < 4000){
 
 			avgFitness=0.f;
 			minFitness=Float.POSITIVE_INFINITY;
