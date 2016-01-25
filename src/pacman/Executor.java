@@ -94,11 +94,11 @@ public class Executor
 
 		//			System.out.println("\n---------- Juego NearestPillPacman "+i+" ----------");
 
-		//		exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new Quique_Ghosts(),visual);
+				exec.runGameTimed(new DataCollectorController(new KeyBoardInput()),new Quique_Ghosts(),visual);
 
-		DecisionTreePacmanController controladorDTQuique = new DecisionTreePacmanController();
+//		DecisionTreePacmanController controladorDTQuique = new DecisionTreePacmanController();
 
-		System.out.println(controladorDTQuique.toString());
+//		System.out.println(controladorDTQuique.toString());
 
 		//exec.runGameTimed(new NearestPillPacMan(),new Quique_Ghosts(),visual);
 		//
