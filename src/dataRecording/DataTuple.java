@@ -179,7 +179,7 @@ public class DataTuple {
 	 *            Distance to be normalized
 	 * @return Normalized distance
 	 */
-	public double normalizeDistance(int dist) {
+	public  double normalizeDistance(int dist) {
 		return ((dist - 0) / (double) (this.maximumDistance - 0)) * (1 - 0) + 0;
 	}
 

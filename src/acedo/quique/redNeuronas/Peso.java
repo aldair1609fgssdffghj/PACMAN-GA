@@ -1,20 +1,25 @@
 package acedo.quique.redNeuronas;
 
+/**
+ * @author Enrique Acedo
+ * @date 31/01/2016
+ */
+
 public class Peso {
 
 	/** ATRIBUTOS **/
-	private float value;
+	private double value;
 	
 	/** METODOS **/
-	public Peso (float value){
+	public Peso (double value){
 		this.value = value;
 	}//constructor
 	
 	/** GETTERS AND SETTERS **/
-	public float getValue(){
+	public double getValue(){
 		return value;
 	}
-	public void setValue(float value){
+	public void setValue(double value){
 		this.value = value;
 	}
 }//class

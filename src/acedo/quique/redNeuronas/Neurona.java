@@ -1,33 +1,45 @@
 package acedo.quique.redNeuronas;
 
+/**
+ * @author Enrique Acedo
+ * @date 31/01/2016
+ */
+
 public class Neurona {
 
 	/** ATRIBUTOS **/
 	private int id;
-	private float value;
-	private float umbral;
+	private double value;
+	private double umbral;
 	private int capa;
+	private double error;
 
 	/** METODOS **/
 
 	/**
 	 * Constructor para la capa de entrada
 	 * @param id
-	 * @param value
+	 * @param value2
 	 */
-	public Neurona(int id, float value,float umbral, int capa){
-		this.value = value;
+	public Neurona(int id, double value2,double umbral2, int capa){
+		this.value = value2;
 		this.id = id;
-		this.umbral = umbral;
+		
+		if(capa != 0)
+			this.umbral = umbral2;
+		else
+			this.umbral = 0;
+		
 		this.capa = capa;
+		this.error = 0;
 	}//constructor
 
 
 	/** GETTERS AND SETTERS **/
-	public float getUmbral() {
+	public double getUmbral() {
 		return umbral;
 	}
-	public void setUmbral(float umbral) {
+	public void setUmbral(double umbral) {
 		this.umbral = umbral;
 	}
 	public int getId() {
@@ -37,11 +49,17 @@ public class Neurona {
 		return capa;
 	}
 
-	public float getValue() {
+	public double getValue() {
 		return value;
 	}
 
-	public void setValue(float value) {
-		this.value = value;
+	public void setValue(double valores) {
+		this.value = valores;
+	}
+	public double getError(){
+		return error;
+	}
+	public void setError(double e){
+		error = e;
 	}
 }//class
