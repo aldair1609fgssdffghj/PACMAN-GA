@@ -13,29 +13,27 @@ public class RedNeuronas {
 	/** ATRIBUTOS **/
 	public static final int NUM_CAPAS = 3;
 	public final double C;
-	public  HashMap<Integer, Capa> capas;
-	public  HashMap<Integer, Conector> conectores;
+	public  HashMap<Integer, Capa> capas_neuronas;
+	public  HashMap<Integer, Conector> capas_pesos;
 
-	private static RedNeuronas red = null;
+	/** METODOS */
+	
+	public RedNeuronas(int num_neuronas_entrada, int num_neuronas_ocultas){
+		C = 0.7;
 
-	/** METODOS 
-	 * @param  */
-	private RedNeuronas(int num_neuronas_entrada, int num_neuronas_ocultas,int num_tuplas){
-		C = 0.01;
+		capas_neuronas = new HashMap<Integer, Capa>();
 
-		capas = new HashMap<Integer, Capa>();
+		capas_neuronas.put(0, new Capa(0, num_neuronas_entrada));
+		capas_neuronas.put(1, new Capa(1, num_neuronas_ocultas));
+		capas_neuronas.put(2, new Capa(2, 5));
 
-		capas.put(0, new Capa(0, num_neuronas_entrada));
-		capas.put(1, new Capa(1, num_neuronas_ocultas));
-		capas.put(2, new Capa(2, 5));
+		capas_pesos = new HashMap<Integer, Conector>();
 
-		conectores = new HashMap<Integer, Conector>();
-
-		for(int i= 0; i < capas.size()-1; i++){
-			int num_neuronas_capa =capas.get(i).getNeuronas().size();
-			int num_neuronas_prox_capa =capas.get(i+1).getNeuronas().size();
+		for(int i= 0; i < capas_neuronas.size()-1; i++){
+			int num_neuronas_capa =capas_neuronas.get(i).getNeuronas().size();
+			int num_neuronas_prox_capa =capas_neuronas.get(i+1).getNeuronas().size();
 			int num_conectores = num_neuronas_capa * num_neuronas_prox_capa;
-			conectores.put(i, new Conector(i, i, num_conectores));
+			capas_pesos.put(i, new Conector(i, i, num_conectores));
 		}//for
 	}//constructor
 
@@ -46,9 +44,9 @@ public class RedNeuronas {
 	 */
 	public void propagarValor(int capa){
 		if(capa < NUM_CAPAS){
-			HashMap<Integer, Neurona> neuronas_entrada = capas.get(capa-1).getNeuronas();
-			HashMap<Integer, Peso> pesos = conectores.get(capa-1).getPesos();
-			HashMap<Integer, Neurona> neuronas = capas.get(capa).getNeuronas();
+			HashMap<Integer, Neurona> neuronas_entrada = capas_neuronas.get(capa-1).getNeuronas();
+			HashMap<Integer, Peso> pesos = capas_pesos.get(capa-1).getPesos();
+			HashMap<Integer, Neurona> neuronas = capas_neuronas.get(capa).getNeuronas();
 
 			double[] valores = new double[neuronas.size()];
 
@@ -67,7 +65,7 @@ public class RedNeuronas {
 			// Calculamos el valore de salida de las neuronas ocultas
 			if(capa > 0 && capa < NUM_CAPAS){
 				for(int i = 0; i < valores.length; i++)
-					valores[i] = calcularSalidaOcultas(valores[i]);
+					valores[i] = calcularSalida(valores[i]);
 			}//if
 
 			for(int i = 0; i < valores.length; i++)
@@ -84,9 +82,9 @@ public class RedNeuronas {
 	 */
 	public void propagarError(int capa){
 		if(capa < NUM_CAPAS && capa > 1){
-			HashMap<Integer, Neurona> neuronas_entrada = capas.get(capa-1).getNeuronas();
-			HashMap<Integer, Peso> pesos = conectores.get(capa-1).getPesos();
-			HashMap<Integer, Neurona> neuronas = capas.get(capa).getNeuronas();
+			HashMap<Integer, Neurona> neuronas_entrada = capas_neuronas.get(capa-1).getNeuronas();
+			HashMap<Integer, Peso> pesos = capas_pesos.get(capa-1).getPesos();
+			HashMap<Integer, Neurona> neuronas = capas_neuronas.get(capa).getNeuronas();
 
 			for(int i = 0; i < neuronas_entrada.size(); i++){
 				double result = 0;
@@ -115,13 +113,13 @@ public class RedNeuronas {
 	 */
 	public void procesarDatosEntrada(double[] valores){
 
-		HashMap<Integer, Neurona> neuronas_entrada = red.capas.get(0).getNeuronas();
+		HashMap<Integer, Neurona> neuronas_entrada = this.capas_neuronas.get(0).getNeuronas();
 
 		for(int i= 0; i < valores.length; i++)
 			neuronas_entrada.get(i).setValue(valores[i]);
 
 		//		printRed();
-		red.propagarValor(1);
+		this.propagarValor(1);
 
 	}//procesarDatosEntrada
 
@@ -130,7 +128,7 @@ public class RedNeuronas {
 	 * @param valor_esperado
 	 */
 	public void calcularErrorSalida(double[] valor_esperado){
-		HashMap<Integer, Neurona> neuronas = capas.get(NUM_CAPAS-1).getNeuronas();
+		HashMap<Integer, Neurona> neuronas = capas_neuronas.get(NUM_CAPAS-1).getNeuronas();
 
 		for(int i = 0; i < neuronas.size(); i++){
 			double valor = neuronas.get(i).getValue();
@@ -147,10 +145,10 @@ public class RedNeuronas {
 	 */
 	public void actualizarRed(){
 
-		for(int i = 1; i < capas.size(); i++){
-			HashMap<Integer, Neurona> neuronas = capas.get(i).getNeuronas();
-			HashMap<Integer, Peso> pesos = conectores.get(i-1).getPesos();
-			HashMap<Integer, Neurona> neuronas_capa_inferior = capas.get(i-1).getNeuronas();
+		for(int i = 1; i < capas_neuronas.size(); i++){
+			HashMap<Integer, Neurona> neuronas = capas_neuronas.get(i).getNeuronas();
+			HashMap<Integer, Peso> pesos = capas_pesos.get(i-1).getPesos();
+			HashMap<Integer, Neurona> neuronas_capa_inferior = capas_neuronas.get(i-1).getNeuronas();
 
 			// Actualizo umbrales
 			for(int j = 0; j < neuronas.size(); j++){
@@ -190,7 +188,7 @@ public class RedNeuronas {
 			result += " Capa "+ i + "\n";
 			result += "----------------------------------------------------------------------------------------------------------------------------------------------------\n\t";
 
-			HashMap<Integer, Neurona> neuronas = capas.get(i).getNeuronas();
+			HashMap<Integer, Neurona> neuronas = capas_neuronas.get(i).getNeuronas();
 			for(int j = 0; j < neuronas.size(); j++){
 				result += "Neurona "+ j + "\t\t|  ";
 			}//for
@@ -215,12 +213,12 @@ public class RedNeuronas {
 			result += "\n----------------------------------------------------------------------------------------------------------------------------------------------------\n\t";
 
 			try{
-				Conector conector = conectores.get(i);
+				Conector conector = capas_pesos.get(i);
 
-				for(int a = 0; a < capas.get(i+1).getNeuronas().size(); a++){
+				for(int a = 0; a < capas_neuronas.get(i+1).getNeuronas().size(); a++){
 					int count = 0;
 					for(int j = 0; j < conector.size(); j++){
-						int num_siguiente_capa = capas.get(i+1).getNeuronas().size();
+						int num_siguiente_capa = capas_neuronas.get(i+1).getNeuronas().size();
 						if(j != 0 && j % num_siguiente_capa == 0)
 							count++;
 						if(j%num_siguiente_capa == a)
@@ -274,7 +272,8 @@ public class RedNeuronas {
 	 * @return id mejor neurona
 	 */
 	public int cogerMejorNeurona(){
-		HashMap<Integer, Neurona> neuronas = red.capas.get(RedNeuronas.NUM_CAPAS-1).getNeuronas();
+//		printRed();
+		HashMap<Integer, Neurona> neuronas = this.capas_neuronas.get(RedNeuronas.NUM_CAPAS-1).getNeuronas();
 
 
 		int best_move = -1;
@@ -296,15 +295,8 @@ public class RedNeuronas {
 	 * @param Ij
 	 * @return 1 / (1 + e^ -Ij)
 	 */
-	private double calcularSalidaOcultas(double Ij){
+	private double calcularSalida(double Ij){
 		return 1/(1+Math.exp(-Ij));
 	}//calcularSalidaOcultas
-
-	/** GETTERS AND SETTERS */
-	public static RedNeuronas getRed(int num_neuronas_entrada, int num_neuronas_ocultas, int num_tuplas){
-		if(red == null)
-			red = new RedNeuronas(num_neuronas_entrada, num_neuronas_ocultas, num_tuplas);
-		return red;
-	}//getRed
 
 }//class
